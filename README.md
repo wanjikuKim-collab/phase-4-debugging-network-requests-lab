@@ -61,13 +61,74 @@ developing your own process.
 ## Your Notes Here
 
 - Add a new toy when the toy form is submitted
-
+On submission, the following error is displayed on the Network tab of the web console
+```c
+  {status: 500, error: "Internal Server Error",…}
+error
+: 
+"Internal Server Error"
+exception
+: 
+"#<NameError: uninitialized constant ToysController::Toys>"
+status
+: 
+500
+traces
+: 
+{,…}
+Application Trace
+: 
+[{exception_object_id: 7280, id: 0, trace: "app/controllers/toys_controller.rb:10:in `create'"}]
+Framework Trace
+: 
+[{exception_object_id: 7280, id: 1,…}, {exception_object_id: 7280, id: 2,…},…]
+Full Trace
+: 
+[{exception_object_id: 7280, id: 0, trace: "app/controllers/toys_controller.rb:10:in `create'"},…]
+```
   - How I debugged:
+  Normally with this error(`status 500` - NameError) as described in the previous labs could be as a result of a typo. So I checked for this
+
+  problem `Toys.create` instead of `Toy.create`. Modules are in singular.
 
 - Update the number of likes for a toy
 
+The number of likes wasn't going up. Error displayed on web console:
+```c
+VM370:1 Uncaught (in promise) SyntaxError: Unexpected end of JSON input
+    at ToyCard.js:27:1
+```
   - How I debugged:
+
+  `Unexpected end of JSON input` error indicates a JSON formatted string wasn't returned
+
+  On checking the `#update` action, it did not render json. So solution was to do this
+
+  ```code
+  render json: toy, status: :accepted
+  ```
 
 - Donate a toy to Goodwill (and delete it from our database)
+The toy wasn't getting deleted on the database. it returned a ROuting Error on my terminal. On checking the Network tab it displayed this:
+```c
+{status: 404, error: "Not Found",…}
+error
+: 
+"Not Found"
+exception
+: 
+"#<ActionController::RoutingError: No route matches [DELETE] \"/toys/5\">"
+status
+: 
+404
+traces
+: 
+{Application Trace: [],…}
+```
 
   - How I debugged:
+
+  A 404 error indicates that we should check the rails server logs in the backend and add the required route to handle the HTTP verb + path.
+  This is an error with the routing.
+
+  solution: added the delete route in `routes.rb`
